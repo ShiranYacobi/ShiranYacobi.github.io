@@ -202,55 +202,76 @@
     body::-webkit-scrollbar{display:none}
     .cursor,.vtab,.hint{display:none}
     .nav-c{display:none}
-    header,.foot{padding:16px clamp(16px,4vw,26px)}
-    .brand{font-size:16px}
-    .top-right{gap:14px;font-size:12.5px}
-    .prog{bottom:20px;width:120px}
+    header{padding:14px clamp(16px,4vw,24px)}
+    .foot{display:none}
+    .brand{font-size:15px}
+    .top-right{gap:13px;font-size:12px}
+    .prog{bottom:16px;width:110px}
 
     /* scroll the page normally → the pinned track slides sideways (desktop feel) */
     #track{position:fixed;top:0;left:0;width:100vw;height:100svh;overflow:visible;will-change:transform}
     #scroll-spacer{width:1px}
     .panel{overflow:hidden}
-    .stage{position:relative;inset:auto;display:block;min-height:100%;padding:64px clamp(18px,5vw,32px) 48px}
-    .abs{position:relative!important;inset:auto!important;transform:none!important;text-align:left!important;max-width:100%!important}
+    .stage{position:relative;inset:auto;display:flex;flex-direction:column;justify-content:center;min-height:100%;padding:52px clamp(16px,5vw,26px) 30px}
 
     /* hero */
-    .p-hero .stage{display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
-    .p-hero .name{order:1;font-size:clamp(44px,14vw,96px);margin:0}
-    .p-hero .lead-idx{order:2;margin-top:18px}
-    .p-hero .lead-sub{order:3;max-width:100%;margin-top:8px}
-    .p-hero .title{order:4;font-size:clamp(38px,12vw,88px);margin-top:12px}
-    .p-hero .card{order:5;width:100%!important;max-width:400px;margin:22px 0}
-    .p-hero .based{order:6;flex-direction:row;margin-top:10px}
+    .p-hero .stage{align-items:flex-start;gap:0}
+    .p-hero .name{order:1;font-size:clamp(40px,13vw,82px);margin:0;line-height:.9}
+    .p-hero .lead-idx{order:2;margin-top:14px;font-size:32px}
+    .p-hero .lead-sub{order:3;max-width:100%;margin-top:6px;font-size:14px}
+    .p-hero .title{order:4;font-size:clamp(30px,10vw,72px);margin-top:10px;line-height:.9}
+    .p-hero .card{order:5;width:100%!important;max-width:340px;margin:14px 0}
+    .p-hero .code{padding:12px 12px 16px}
+    .p-hero .code pre{font-size:10.5px;line-height:1.5}
+    .p-hero .based{order:6;flex-direction:row;margin-top:6px}
+    .p-hero .based .txt{font-size:12px;line-height:1.3}
 
     /* identity */
-    .p-about .stage{display:flex;flex-direction:column;justify-content:center;gap:20px}
-    .p-about .big{font-size:clamp(38px,10vw,80px)}
-    .p-about .stmt2,.p-about .edu{max-width:100%}
-    .p-about .portrait{height:auto;justify-self:start;margin:0}
-    .p-about .portrait img{height:auto;width:100%;max-width:320px}
+    .p-about .stage{gap:14px}
+    .p-about .big{font-size:clamp(32px,8.5vw,68px)}
+    .p-about .hud{margin-bottom:12px}
+    .p-about .stmt2{max-width:100%;font-size:13.5px;margin-top:12px}
+    .p-about .portrait{height:auto;margin:0}
+    .p-about .portrait img{height:auto;width:100%;max-width:230px}
+    .p-about .edu{max-width:100%;margin-top:14px;padding-top:12px}
 
     /* disciplines */
-    .p-disc .stage{display:flex;flex-direction:column;justify-content:center}
-    .p-disc .stack{display:flex}
-    .p-disc .stack div{font-size:clamp(36px,11vw,88px)}
+    .p-disc .stack div{font-size:clamp(32px,10vw,78px)}
     .p-disc .stack div:hover{transform:none}
-    .p-disc .feat{margin-top:24px;text-align:left}
+    .p-disc .more{margin-top:16px;padding:10px 22px;font-size:13px}
+    .p-disc .feat{margin-top:18px;text-align:left}
 
-    /* work + skills */
-    .p-work .stage,.p-tool .stage{justify-content:center}
-    .colhead h2{font-size:clamp(32px,9vw,60px)}
+    /* work */
+    .p-work .stage,.p-tool .stage{justify-content:flex-start}
+    .colhead{margin-bottom:12px}
+    .colhead h2{font-size:clamp(28px,7.5vw,52px)}
     .cards,.metarow,.bullets{grid-template-columns:1fr}
-    .skrow{grid-template-columns:1fr;gap:8px}
+    .work-row{gap:4px 12px;margin-bottom:8px}
+    .work-row .co{font-size:20px}
+    .work-row .yr{margin-left:0;flex-basis:100%}
+    .bullets{gap:7px;margin-top:6px;max-width:100%}
+    .bullets li{font-size:12px;line-height:1.32;padding-left:15px}
+    .cards{gap:8px;margin-top:12px}
+    .wc{padding:11px 13px;border-radius:12px}
+    .wc .k{font-size:9px}
+    .wc h3{font-size:13px;margin:5px 0 5px}
+    .wc p{font-size:11.5px;line-height:1.35}
+
+    /* toolkit */
+    .skrow{grid-template-columns:1fr;gap:6px;padding:9px 0}
+    .skrow .cat{font-size:11px}
+    .tags{gap:6px}
+    .tag{padding:6px 12px;font-size:12.5px}
     .skill-search{max-width:100%}
+    .skill-search input{padding:11px 76px 11px 38px;font-size:13px}
 
     /* contact */
-    .p-contact .wash{display:none}
-    .p-contact .inner{position:relative;inset:auto;min-height:100%;padding:80px 22px}
-    .p-contact h2{font-size:clamp(42px,12vw,110px)}
-    .p-contact .divider{width:100%}
-    .p-contact .btns{flex-direction:column;align-items:stretch;width:100%;max-width:400px}
-    .cbtn{justify-content:center}
+    .p-contact .wash{display:block}
+    .p-contact .inner{padding:50px 22px}
+    .p-contact h2{font-size:clamp(38px,11vw,96px)}
+    .p-contact .divider{width:100%;margin:16px 0 20px}
+    .p-contact .btns{flex-direction:column;align-items:stretch;width:100%;max-width:360px;gap:11px}
+    .cbtn{justify-content:center;padding:14px 22px;font-size:15px}
   }
   /* two columns on iPad-size screens */
   @media (pointer:coarse) and (min-width:760px){
