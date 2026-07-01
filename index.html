@@ -137,7 +137,7 @@
   /* ===== P4 WORK ===== */
   .colhead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
   .colhead h2{font-family:var(--disp);text-transform:uppercase;font-size:clamp(30px,5.4vw,74px);line-height:.86;letter-spacing:-.03em}
-  .p-work .stage{display:flex;flex-direction:column;justify-content:center;gap:26px}
+  .p-work .stage,.p-highlights .stage{display:flex;flex-direction:column;justify-content:center;gap:26px}
   .work-row{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
   .work-row .co{font-family:var(--disp);font-size:clamp(24px,3vw,40px);text-transform:uppercase}
   .work-row .rl{font-family:var(--mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
@@ -212,18 +212,19 @@
     #track{position:fixed;top:0;left:0;width:100vw;height:100svh;overflow:visible;will-change:transform}
     #scroll-spacer{width:1px}
     .panel{overflow:hidden}
-    .stage{position:relative;inset:auto;display:flex;flex-direction:column;justify-content:center;min-height:100%;padding:52px clamp(16px,5vw,26px) 30px}
+    .stage{position:relative;inset:auto;display:flex;flex-direction:column;justify-content:center;min-height:100%;padding:56px clamp(16px,5vw,26px) 28px}
+    .abs{position:relative!important;inset:auto!important;transform:none!important;text-align:left!important;max-width:100%!important}
 
     /* hero */
     .p-hero .stage{align-items:flex-start;gap:0}
-    .p-hero .name{order:1;font-size:clamp(40px,13vw,82px);margin:0;line-height:.9}
-    .p-hero .lead-idx{order:2;margin-top:14px;font-size:32px}
-    .p-hero .lead-sub{order:3;max-width:100%;margin-top:6px;font-size:14px}
-    .p-hero .title{order:4;font-size:clamp(30px,10vw,72px);margin-top:10px;line-height:.9}
-    .p-hero .card{order:5;width:100%!important;max-width:340px;margin:14px 0}
-    .p-hero .code{padding:12px 12px 16px}
-    .p-hero .code pre{font-size:10.5px;line-height:1.5}
-    .p-hero .based{order:6;flex-direction:row;margin-top:6px}
+    .p-hero .lead-idx{order:1;font-size:30px;margin:0}
+    .p-hero .lead-sub{order:2;max-width:100%;margin-top:6px;font-size:13.5px}
+    .p-hero .name{order:3;font-size:clamp(34px,11vw,66px);margin-top:12px;line-height:.9}
+    .p-hero .title{order:4;font-size:clamp(24px,8vw,52px);margin-top:8px;line-height:.92}
+    .p-hero .card{order:5;width:100%!important;max-width:300px;margin:14px 0}
+    .p-hero .code{padding:11px 11px 14px}
+    .p-hero .code pre{font-size:10px;line-height:1.5}
+    .p-hero .based{order:6;flex-direction:row;margin-top:8px;align-items:flex-start;gap:12px}
     .p-hero .based .txt{font-size:12px;line-height:1.3}
 
     /* identity */
@@ -242,7 +243,7 @@
     .p-disc .feat{margin-top:18px;text-align:left}
 
     /* work */
-    .p-work .stage,.p-tool .stage{justify-content:flex-start}
+    .p-work .stage,.p-tool .stage,.p-highlights .stage{justify-content:flex-start}
     .colhead{margin-bottom:12px}
     .colhead h2{font-size:clamp(28px,7.5vw,52px)}
     .cards,.metarow,.bullets{grid-template-columns:1fr}
@@ -286,7 +287,7 @@
 <div class="cursor" id="cursor" aria-hidden="true"></div>
 
 <header>
-  <a class="brand" href="#" data-go="0">Shiran<span style="color:var(--accent)">.</span>Yacobi</a>
+  <a class="brand" href="#" data-target=".p-hero">Shiran<span style="color:var(--accent)">.</span>Yacobi</a>
   <div class="top-right">
     <a href="https://github.com/ShiranYacobi" target="_blank" rel="noopener">Github</a>
     <a href="https://www.linkedin.com/in/shiran-yacobi/" target="_blank" rel="noopener">LinkedIn</a>
@@ -294,9 +295,9 @@
   </div>
 </header>
 <nav class="nav-c">
-  <a href="#" data-go="3">Works</a><span class="comma">,&nbsp;</span>
-  <a href="#" data-go="1">About</a><span class="comma">,&nbsp;</span>
-  <a href="#" data-go="5">Contact</a>
+  <a href="#" data-target=".p-work">Works</a><span class="comma">,&nbsp;</span>
+  <a href="#" data-target=".p-about">About</a><span class="comma">,&nbsp;</span>
+  <a href="#" data-target=".p-contact">Contact</a>
 </nav>
 
 <div id="track">
@@ -357,7 +358,7 @@
         <div class="on">Backend</div>
         <div>Databases</div>
         <div>Full&#8209;Stack</div>
-        <a class="more" href="#" data-go="3">More about my work</a>
+        <a class="more" href="#" data-target=".p-work">More about my work</a>
       </div>
       <div class="abs feat rise d3">
         <div class="kfont">Education</div>
@@ -382,10 +383,17 @@
         <li>Develop and integrate RESTful services across distributed microservices, ensuring maintainability, scalability, and clean architecture.</li>
         <li>Database design, code reviews, CI/CD deployments, automated testing and environment stabilization.</li>
       </ul>
+    </div>
+  </section>
+
+  <!-- 05 HIGHLIGHTS -->
+  <section class="panel p-highlights" data-theme="light">
+    <div class="stage">
+      <div class="colhead rise"><h2>Highlights</h2><span class="idx">05/</span></div>
       <div class="cards">
-        <div class="wc rise d2"><div class="k">TECHNICAL OWNERSHIP</div><h3>From investigation<br>to production</h3><p>Owned complex enterprise Change Requests end-to-end — technical analysis, architecture decisions, implementation, testing, deployment, and production support.</p></div>
-        <div class="wc rise d3"><div class="k">FRONTEND MODERNIZATION</div><h3>AngularJS →<br>React TypeScript</h3><p>Led the modernization of a legacy enterprise platform by designing AI-assisted migration workflows in Cursor, enabling accurate and scalable frontend transformation.</p></div>
-        <div class="wc rise d4"><div class="k">ENGINEERING IMPACT</div><h3>Beyond<br>writing code</h3><p>Performed code reviews, improved UI experience, collaborated closely with Product Owners, mentored teammates, and helped shape engineering decisions across initiatives.</p></div>
+        <div class="wc rise d1"><div class="k">TECHNICAL OWNERSHIP</div><h3>From investigation<br>to production</h3><p>Owned complex enterprise Change Requests end-to-end — technical analysis, architecture decisions, implementation, testing, deployment, and production support.</p></div>
+        <div class="wc rise d2"><div class="k">FRONTEND MODERNIZATION</div><h3>AngularJS →<br>React TypeScript</h3><p>Led the modernization of a legacy enterprise platform by designing AI-assisted migration workflows in Cursor, enabling accurate and scalable frontend transformation.</p></div>
+        <div class="wc rise d3"><div class="k">ENGINEERING IMPACT</div><h3>Beyond<br>writing code</h3><p>Performed code reviews, improved UI experience, collaborated closely with Product Owners, mentored teammates, and helped shape engineering decisions across initiatives.</p></div>
       </div>
     </div>
   </section>
@@ -393,7 +401,7 @@
   <!-- 05 TOOLKIT -->
   <section class="panel p-tool" data-theme="light">
     <div class="stage">
-      <div class="colhead rise"><h2>Toolkit</h2><span class="idx">05/</span></div>
+      <div class="colhead rise"><h2>Toolkit</h2><span class="idx">06/</span></div>
       <div class="skill-search rise d1">
         <span class="mag"></span>
         <input id="skillSearch" type="text" placeholder="Search skills…" autocomplete="off" spellcheck="false" aria-label="Search skills">
@@ -416,7 +424,7 @@
       <div class="btns rise d2">
         <a class="cbtn" href="mailto:shiranyacobi1@gmail.com">shiranyacobi1@gmail.com</a>
         <a class="cbtn" href="tel:+972524759553">+972 52 475 9553</a>
-        <a class="cbtn back" href="#" data-go="0"><span class="arrow">←</span> Back</a>
+        <a class="cbtn back" href="#" data-target=".p-hero"><span class="arrow">←</span> Back</a>
       </div>
     </div>
   </section>
@@ -455,7 +463,9 @@
     if(mobile)return Math.round((window.scrollY/scrollRange())*(panels.length-1));
     return Math.round(current/vw);
   }
-  function go(i){
+  function go(x){
+    var i=(typeof x==='number')?x:panels.indexOf(document.querySelector(x));
+    if(i<0)return;
     i=Math.max(0,Math.min(panels.length-1,i));
     if(mobile){window.scrollTo({top:i/(panels.length-1)*scrollRange(),behavior:'smooth'});}
     else{target=i*vw;}
@@ -478,8 +488,8 @@
     if(e.key==='ArrowLeft'||e.key==='PageUp')go(idxNow()-1);
   });
 
-  document.querySelectorAll('[data-go]').forEach(function(el){
-    el.addEventListener('click',function(ev){ev.preventDefault();go(+el.getAttribute('data-go'));});
+  document.querySelectorAll('[data-target]').forEach(function(el){
+    el.addEventListener('click',function(ev){ev.preventDefault();go(el.getAttribute('data-target'));});
   });
 
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.3});
