@@ -206,8 +206,13 @@
     .top-right{gap:14px;font-size:12.5px}
     .prog{bottom:20px;width:120px}
 
-    /* keep desktop's sideways track; each panel scrolls vertically only if it overflows */
-    .panel{overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+    /* native sideways swipe: the track scrolls horizontally and snaps per screen */
+    #track{overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;transform:none!important;will-change:auto;
+      scrollbar-width:none}
+    #track::-webkit-scrollbar{display:none}
+    .panel{scroll-snap-align:start;scroll-snap-stop:always;overflow-x:hidden;overflow-y:auto;
+      -webkit-overflow-scrolling:touch;overscroll-behavior:contain}
     .stage{position:relative;inset:auto;display:block;min-height:100%;padding:74px clamp(18px,5vw,34px) 62px}
     .abs{position:relative!important;inset:auto!important;transform:none!important;text-align:left!important;max-width:100%!important}
 
@@ -420,34 +425,31 @@
   function measure(){
     vw=window.innerWidth;mobile=mq.matches;
     max=Math.max(0,track.scrollWidth-vw);
-    target=Math.min(target,max);
+    if(mobile){track.style.transform='';}
+    else{target=Math.min(target,max);}
   }
   window.addEventListener('resize',measure);measure();
-  function go(i){i=Math.max(0,Math.min(panels.length-1,i));target=i*vw;hint&&hint.classList.add('hide');}
-  function idxNow(){return Math.round(current/vw);}
+  function idxNow(){return mobile?Math.round(track.scrollLeft/vw):Math.round(current/vw);}
+  function go(i){
+    i=Math.max(0,Math.min(panels.length-1,i));
+    if(mobile){track.scrollTo({left:i*vw,behavior:'smooth'});}
+    else{target=i*vw;}
+    hint&&hint.classList.add('hide');
+  }
 
+  // desktop: mouse wheel drives the sideways track
   window.addEventListener('wheel',function(e){
+    if(mobile)return;
     e.preventDefault();
     const d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
     target=Math.max(0,Math.min(max,target+d*1.05));
     hint&&hint.classList.add('hide');
   },{passive:false});
 
-  // touch: swipe sideways to change screen (vertical swipes scroll a tall panel)
-  var tsx=0,tsy=0,tst=0;
-  window.addEventListener('touchstart',function(e){var t=e.touches[0];tsx=t.clientX;tsy=t.clientY;tst=Date.now();},{passive:true});
-  window.addEventListener('touchend',function(e){
-    var t=e.changedTouches[0],dx=t.clientX-tsx,dy=t.clientY-tsy,dt=Date.now()-tst;
-    if(Math.abs(dx)>Math.abs(dy) && (Math.abs(dx)>45 || (Math.abs(dx)>24 && dt<250))){
-      go(idxNow()+(dx<0?1:-1));
-    }
-  },{passive:true});
-
   window.addEventListener('keydown',function(e){
     if(e.target&&/^(INPUT|TEXTAREA)$/.test(e.target.tagName))return;
     if(e.key==='ArrowRight'||e.key==='PageDown')go(idxNow()+1);
     if(e.key==='ArrowLeft'||e.key==='PageUp')go(idxNow()-1);
-    if(e.key==='Home')target=0;if(e.key==='End')target=max;
   });
 
   document.querySelectorAll('[data-go]').forEach(function(el){
@@ -456,20 +458,34 @@
 
   const io=new IntersectionObserver(function(es){
     es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});
-  },{threshold:.35});
+  },{threshold:.3});
   panels.forEach(function(p){io.observe(p);});
 
-  function frame(){
-    current+=(target-current)*0.09;
-    if(Math.abs(target-current)<0.5)current=target;
-    track.style.transform='translate3d('+(-current)+'px,0,0)';
-    const p=max?current/max:0;
+  // mobile: native horizontal scroll-snap → update chrome colour + progress
+  function mobileScroll(){
+    var p=max?track.scrollLeft/max:0;
     progFill.style.transform='scaleX('+p+')';
-    const ai=Math.max(0,Math.min(panels.length-1,Math.round(current/vw)));
+    var ai=Math.max(0,Math.min(panels.length-1,Math.round(track.scrollLeft/vw)));
     document.body.classList.toggle('theme-dark',panels[ai].dataset.theme==='dark');
+    hint&&hint.classList.add('hide');
+  }
+  track.addEventListener('scroll',function(){if(mobile)mobileScroll();},{passive:true});
+
+  // desktop: JS-animated sideways transform
+  function frame(){
+    if(!mobile){
+      current+=(target-current)*0.09;
+      if(Math.abs(target-current)<0.5)current=target;
+      track.style.transform='translate3d('+(-current)+'px,0,0)';
+      const p=max?current/max:0;
+      progFill.style.transform='scaleX('+p+')';
+      const ai=Math.max(0,Math.min(panels.length-1,Math.round(current/vw)));
+      document.body.classList.toggle('theme-dark',panels[ai].dataset.theme==='dark');
+    }
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
+  if(mobile)mobileScroll();
 
   // custom cursor (desktop only)
   if(window.matchMedia('(hover:hover) and (pointer:fine) and (min-width:1025px)').matches && !mobile){
