@@ -197,8 +197,9 @@
 
   /* ---------- Mobile + tablet: horizontal pager (swipe sideways) ---------- */
   @media(max-width:1024px), (pointer:coarse){
-    html,body{overflow:hidden;height:100%}
-    body{cursor:auto}
+    html,body{overflow-x:hidden;overflow-y:auto;height:auto}
+    body{cursor:auto;scrollbar-width:none}
+    body::-webkit-scrollbar{display:none}
     .cursor,.vtab,.hint{display:none}
     .nav-c{display:none}
     header,.foot{padding:16px clamp(16px,4vw,26px)}
@@ -206,14 +207,11 @@
     .top-right{gap:14px;font-size:12.5px}
     .prog{bottom:20px;width:120px}
 
-    /* native sideways swipe: the track scrolls horizontally and snaps per screen */
-    #track{overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
-      -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;transform:none!important;will-change:auto;
-      scrollbar-width:none}
-    #track::-webkit-scrollbar{display:none}
-    .panel{scroll-snap-align:start;scroll-snap-stop:always;overflow-x:hidden;overflow-y:auto;
-      -webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-    .stage{position:relative;inset:auto;display:block;min-height:100%;padding:74px clamp(18px,5vw,34px) 62px}
+    /* scroll the page normally → the pinned track slides sideways (desktop feel) */
+    #track{position:fixed;top:0;left:0;width:100vw;height:100svh;overflow:visible;will-change:transform}
+    #scroll-spacer{width:1px}
+    .panel{overflow:hidden}
+    .stage{position:relative;inset:auto;display:block;min-height:100%;padding:64px clamp(18px,5vw,32px) 48px}
     .abs{position:relative!important;inset:auto!important;transform:none!important;text-align:left!important;max-width:100%!important}
 
     /* hero */
@@ -422,26 +420,33 @@
   const mq=window.matchMedia('(max-width:1024px), (pointer:coarse)');
   let vw=window.innerWidth,max=0,target=0,current=0,mobile=mq.matches;
 
+  var spacer=document.createElement('div');spacer.id='scroll-spacer';document.body.appendChild(spacer);
+  var raf=false;
+
   function measure(){
     vw=window.innerWidth;mobile=mq.matches;
     max=Math.max(0,track.scrollWidth-vw);
-    if(mobile){track.style.transform='';}
-    else{target=Math.min(target,max);}
+    if(mobile){spacer.style.height=(panels.length*100)+'svh';applyMobile();}
+    else{spacer.style.height='0px';target=Math.min(target,max);}
   }
-  window.addEventListener('resize',measure);measure();
-  function idxNow(){return mobile?Math.round(track.scrollLeft/vw):Math.round(current/vw);}
+  function scrollRange(){return Math.max(1,spacer.offsetHeight-window.innerHeight);}
+  function idxNow(){
+    if(mobile)return Math.round((window.scrollY/scrollRange())*(panels.length-1));
+    return Math.round(current/vw);
+  }
   function go(i){
     i=Math.max(0,Math.min(panels.length-1,i));
-    if(mobile){track.scrollTo({left:i*vw,behavior:'smooth'});}
+    if(mobile){window.scrollTo({top:i/(panels.length-1)*scrollRange(),behavior:'smooth'});}
     else{target=i*vw;}
     hint&&hint.classList.add('hide');
   }
+  window.addEventListener('resize',measure);
 
   // desktop: mouse wheel drives the sideways track
   window.addEventListener('wheel',function(e){
     if(mobile)return;
     e.preventDefault();
-    const d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+    var d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
     target=Math.max(0,Math.min(max,target+d*1.05));
     hint&&hint.classList.add('hide');
   },{passive:false});
@@ -456,20 +461,23 @@
     el.addEventListener('click',function(ev){ev.preventDefault();go(+el.getAttribute('data-go'));});
   });
 
-  const io=new IntersectionObserver(function(es){
-    es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});
-  },{threshold:.3});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.3});
   panels.forEach(function(p){io.observe(p);});
 
-  // mobile: native horizontal scroll-snap → update chrome colour + progress
-  function mobileScroll(){
-    var p=max?track.scrollLeft/max:0;
-    progFill.style.transform='scaleX('+p+')';
-    var ai=Math.max(0,Math.min(panels.length-1,Math.round(track.scrollLeft/vw)));
+  // mobile: vertical page-scroll → horizontal panel translation (pinned)
+  function applyMobile(){
+    var pr=Math.max(0,Math.min(1,(window.scrollY||window.pageYOffset)/scrollRange()));
+    track.style.transform='translate3d('+(-pr*max)+'px,0,0)';
+    progFill.style.transform='scaleX('+pr+')';
+    var ai=Math.max(0,Math.min(panels.length-1,Math.round(pr*(panels.length-1))));
     document.body.classList.toggle('theme-dark',panels[ai].dataset.theme==='dark');
-    hint&&hint.classList.add('hide');
+    panels[ai].classList.add('in');
   }
-  track.addEventListener('scroll',function(){if(mobile)mobileScroll();},{passive:true});
+  window.addEventListener('scroll',function(){
+    if(!mobile)return;
+    if(raf)return;raf=true;
+    requestAnimationFrame(function(){raf=false;applyMobile();});
+  },{passive:true});
 
   // desktop: JS-animated sideways transform
   function frame(){
@@ -477,15 +485,15 @@
       current+=(target-current)*0.09;
       if(Math.abs(target-current)<0.5)current=target;
       track.style.transform='translate3d('+(-current)+'px,0,0)';
-      const p=max?current/max:0;
+      var p=max?current/max:0;
       progFill.style.transform='scaleX('+p+')';
-      const ai=Math.max(0,Math.min(panels.length-1,Math.round(current/vw)));
+      var ai=Math.max(0,Math.min(panels.length-1,Math.round(current/vw)));
       document.body.classList.toggle('theme-dark',panels[ai].dataset.theme==='dark');
     }
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
-  if(mobile)mobileScroll();
+  measure();
 
   // custom cursor (desktop only)
   if(window.matchMedia('(hover:hover) and (pointer:fine) and (min-width:1025px)').matches && !mobile){
